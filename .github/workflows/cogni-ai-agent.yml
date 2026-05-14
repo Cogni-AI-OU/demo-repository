@@ -135,23 +135,29 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      # See: <https://github.com/actions/checkout>
       - uses: actions/checkout@v6
         with:
-          persist-credentials: false  # Prevents Duplicate header: "Authorization" error.
+          persist-credentials: false  # Prevents duplicate Authorization header
+          ref: ${{ env.GITHUB_REF_RESOLVED }}
+      - uses: actions/cache@v5.0.1
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit|
       - uses: actions/setup-python@v6.1.0
         with:
+          cache: pip
+          cache-dependency-path: .devcontainer/requirements.txt
           python-version: '3.12'
-      - name: Restore Python user site
-        id: python-user-site
-        uses: actions/cache@v5.0.1
-        with:
-          path: ~/.local
-          key: ${{ runner.os }}-pip-${{ hashFiles('.devcontainer/requirements.txt') }}
-      - name: Install Python dependencies
-        if: steps.python-user-site.outputs.cache-hit != 'true'
-        run: python -m pip install --user -r .devcontainer/requirements.txt
-      - name: Ensure local bin on PATH
-        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Install dependencies
+        run: |
+          if [ -f .devcontainer/requirements.txt ]; then
+            pip install -r .devcontainer/requirements.txt
+          fi
       # See: <https://github.com/Cogni-AI-OU/cogni-ai-agent-action>
       - name: Run Cogni AI Agent
         uses: Cogni-AI-OU/cogni-ai-agent-action@main
