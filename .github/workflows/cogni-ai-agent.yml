@@ -117,22 +117,46 @@ on:
         required: true
         type: string
 jobs:
-  cogni-ai-agent:
-    name: Run Cogni AI agent
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'workflow_call' ||
-      ((github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
-        github.event.sender.type != 'Bot' &&
-        (github.event.comment.author_association == 'COLLABORATOR' ||
-         github.event.comment.author_association == 'MEMBER' ||
-         github.event.comment.author_association == 'OWNER') &&
-        contains(github.event.comment.body, '/co'))
+  cogni-ai:
+    name: Cogni AI Agent Local
+    outputs:
+      run: ${{ steps.cogni-ai.outputs.run }}
+    # Note: These are pre-run conditions, actual trigger conditions are defined within the action it-self.
+    if: |
+      (
+        github.event_name == 'workflow_dispatch' ||
+        github.event_name == 'workflow_call' ||
+        github.event.sender.type != 'Bot'
+      ) &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        github.event_name == 'workflow_call' ||
+        contains(
+          github.event.comment.body ||
+          github.event.issue.body ||
+          github.event.pull_request.body ||
+          github.event.discussion.body ||
+          '',
+          '/'
+        ) ||
+        contains(
+          github.event.comment.body ||
+          github.event.issue.body ||
+          github.event.pull_request.body ||
+          github.event.discussion.body ||
+          '',
+          '@'
+        )
+      )
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: write
-      id-token: write
+      discussions: read
+      id-token: write  # Needed so opencode can request an OIDC token for GitHub API calls
       issues: write
+      models: read
+      packages: read
       pull-requests: write
     steps:
       # See: <https://github.com/actions/checkout>
@@ -148,8 +172,13 @@ jobs:
             pre-commit|
       - uses: actions/setup-python@v6.1.0
         with:
-          cache: pip
-          cache-dependency-path: .devcontainer/requirements.txt
+          cache: >-
+            ${{ hashFiles('.devcontainer/requirements.txt', 'requirements.txt',
+            '**/pyproject.toml') != '' && 'pip' || '' }}
+          cache-dependency-path: |
+            .devcontainer/requirements.txt
+            requirements.txt
+            **/pyproject.toml
           python-version: '3.12'
       - name: Install pre-commit
         run: pip install pre-commit
@@ -157,6 +186,8 @@ jobs:
         run: |
           if [ -f .devcontainer/requirements.txt ]; then
             pip install -r .devcontainer/requirements.txt
+          elif [ -f requirements.txt ]; then
+            pip install -r requirements.txt
           fi
       # See: <https://github.com/Cogni-AI-OU/cogni-ai-agent-action>
       - name: Run Cogni AI Agent
