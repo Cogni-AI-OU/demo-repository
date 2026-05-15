@@ -155,7 +155,7 @@ env:
   OPENCODE_MODEL_DEFAULT: opencode/gemini-3-flash
 jobs:
   cogni-ai:
-    name: Cogni AI Agent Local
+    name: Cogni AI Agent
     outputs:
       run: ${{ steps.cogni-ai.outputs.run }}
     # Note: These are pre-run conditions, actual trigger conditions are defined within the action it-self.
@@ -226,9 +226,9 @@ jobs:
           elif [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
-      - name: Run Cogni AI Agent Local
+      - name: Run Cogni AI Agent
         id: cogni-ai
-        uses: ./
+        uses: Cogni-AI-OU/cogni-ai-agent-action@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -247,30 +247,6 @@ jobs:
           version_agents: ${{ inputs.version_agents || 'main' }}
           version_instructions: ${{ inputs.version_instructions || 'main' }}
           version_skills: ${{ inputs.version_skills || 'main' }}
-      - name: Annotate prompt and output
-        env:
-          COGNI_AI_PROMPT: ${{ steps.cogni-ai.outputs.prompt }}
-          COGNI_AI_OUTPUT: ${{ steps.cogni-ai.outputs.response }}
-        run: |
-          set -euo pipefail
-          escape() {
-            local value="$1"
-            value=${value//'%'/'%25'}
-            value=${value//$'\r'/'%0D'}
-            value=${value//$'\n'/'%0A'}
-            printf '%s' "$value"
-          }
-          echo "::notice title=Cogni AI Agent Local prompt::$(escape "$COGNI_AI_PROMPT")"
-          echo "::notice title=Cogni AI Agent Local output::$(escape "${COGNI_AI_OUTPUT:-}")"
-      - name: Print logs
-        if: cancelled() || failure()
-        run: grep -v INFO ~/.local/share/opencode/log/* || true
-      # Debug with tmate on failure when debug logging is enabled.
-      - if: ${{ (cancelled() || failure()) && runner.debug == '1' }}
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-          timeout-minutes: 15
   summary:
     name: Generate Summary (post-run)
     needs: cogni-ai
