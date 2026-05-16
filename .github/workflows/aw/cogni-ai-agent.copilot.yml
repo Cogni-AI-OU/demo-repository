@@ -65,7 +65,16 @@ jobs:
             const contextType = isPR ? 'pull request' : 'issue';
             const sessionId = `${owner}-${repo}-${isPR ? 'pr' : 'issue'}${issueNumber}`;
 tools:
+  bash:
+    - "cat:*"
+    - "echo:*"
+    - "mkdir:*"
+    - "tee:*"
+    - "date:*"
   cli-proxy: true
+  github:
+    mode: gh-proxy
+    toolsets: [default, pull_requests, issues]
 
 ---
 
