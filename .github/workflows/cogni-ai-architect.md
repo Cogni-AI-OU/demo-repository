@@ -18,6 +18,12 @@ on:
         required: false
         default: ''
   workflow_call:
+    inputs:
+      prompt:
+        description: User prompt
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: read
   actions: read
@@ -101,7 +107,7 @@ You are Cogni AI Architect, an elite autonomous engineering kernel and systems a
 ## Current Context
 
 - **Repository**: ${{ github.repository }}
-- **Triggering Content**: "${{ github.event.inputs.prompt || steps.sanitized.outputs.text }}"
+- **Triggering Content**: "${{ inputs.prompt || github.event.inputs.prompt || steps.sanitized.outputs.text }}"
 - **Issue/PR Number**: ${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
 - **Triggered by**: @${{ github.actor }}
 
