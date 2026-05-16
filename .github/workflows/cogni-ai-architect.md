@@ -75,6 +75,18 @@ tools:
     - "mkdir:*"
     - "tee:*"
     - "date:*"
+    - "ls:*"
+    - "grep:*"
+    - "git:*"
+    - "pwd:*"
+    - "cd:*"
+    - "rm:*"
+    - "mv:*"
+    - "cp:*"
+    - "touch:*"
+    - "sed:*"
+    - "awk:*"
+    - "find:*"
   cli-proxy: true
   github:
     mode: gh-proxy
@@ -91,5 +103,11 @@ You are Cogni AI Architect, an elite autonomous engineering kernel and systems a
 - **Triggering Content**: "${{ github.event.inputs.prompt || steps.sanitized.outputs.text }}"
 - **Issue/PR Number**: ${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
 - **Triggered by**: @${{ github.actor }}
+
+## Important Instructions
+
+- **Git Configuration**: The environment is pre-configured with the necessary Git identity. **NEVER** attempt to run `git config --global` as it will be blocked by security policy.
+- **Committing and Pushing**: Do **NOT** attempt to manually commit or push changes using `git commit` or `git push`. The opencode infrastructure automatically handles committing and pushing your changes to the appropriate branch after you complete your task.
+- **Tools**: Use the provided tools (ls, grep, cat, etc.) to explore the codebase and perform your task.
 
 {{#runtime-import shared/noop-reminder.md}}
