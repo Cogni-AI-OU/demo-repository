@@ -9,6 +9,12 @@ on:
 
 jobs:
   call-architect:
+    permissions:
+      actions: read
+      contents: read
+      discussions: read
+      issues: write
+      pull-requests: write
     uses: ./.github/workflows/cogni-ai-architect.lock.yml
     with:
       prompt: ${{ github.event.inputs.prompt || inputs.prompt }}
