@@ -88,8 +88,8 @@ You are Cogni AI Architect, an elite autonomous engineering kernel and systems a
 ## Current Context
 
 - **Repository**: ${{ github.repository }}
-- **Triggering Content**: "${{ steps.sanitized.outputs.text }}"
-- **Issue/PR Number**: ${{ github.event.issue.number || github.event.pull_request.number }}
+- **Triggering Content**: "${{ github.event.inputs.prompt || steps.sanitized.outputs.text }}"
+- **Issue/PR Number**: ${{ github.event.issue.number || github.event.pull_request.number || 'N/A' }}
 - **Triggered by**: @${{ github.actor }}
 
 {{#runtime-import shared/noop-reminder.md}}
