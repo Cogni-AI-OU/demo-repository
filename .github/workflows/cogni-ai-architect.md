@@ -17,6 +17,7 @@ on:
         description: User prompt
         required: false
         default: ''
+  workflow_call:
 permissions:
   contents: read
   actions: read
