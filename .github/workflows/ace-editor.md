@@ -1,4 +1,5 @@
 ---
+# Recompiled to ensure synchronization
 name: ACE Editor Session
 description: Generates an ACE editor session link when invoked with /ace command on pull request or issue comments
 engine:
