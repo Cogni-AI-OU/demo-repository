@@ -1,4 +1,3 @@
----
 name: Cogni AI Architect Wrapper
 on:
   workflow_dispatch:
@@ -14,7 +13,3 @@ jobs:
     with:
       prompt: ${{ github.event.inputs.prompt || inputs.prompt }}
     secrets: inherit
----
-
-This is a wrapper workflow to test `workflow_call` support in `cogni-ai-architect`.
-It passes the `prompt` input to the called workflow.
