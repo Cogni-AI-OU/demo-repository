@@ -18,7 +18,6 @@ jobs:
   post_ace_link:
     runs-on: ubuntu-latest
     needs: [activation]
-    if: needs.activation.outputs.activated == 'true'
     permissions:
       pull-requests: write
       issues: write
