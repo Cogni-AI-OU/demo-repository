@@ -1,7 +1,7 @@
 ---
-# Cogni AI Agent
+# Cogni AI Architect
 # Triggered by /co, /cogni
-name: Cogni AI Agent
+name: Cogni AI Architect
 description: Runs Cogni AI Architect, an elite autonomous engineering kernel and systems architect.
 engine:
   id: copilot
