@@ -1,5 +1,5 @@
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"e62af133a5a0fc20765af5b7d6d3fa73aded5a3fd0b0e44e22cab76f63809c4c","compiler_version":"v0.72.1","agent_id":"copilot"}
-# gh-aw-manifest: {"version":1,"secrets":["COPILOT_GITHUB_TOKEN","GH_AW_GITHUB_MCP_SERVER_TOKEN","GH_AW_GITHUB_TOKEN","GITHUB_TOKEN"],"actions":[{"repo":"actions/checkout","sha":"de0fac2e4500dabe0009e67214ff5f5447ce83dd","version":"v6.0.2"},{"repo":"actions/download-artifact","sha":"3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c","version":"v8.0.1"},{"repo":"actions/github-script","sha":"3a2844b7e9c422d3c10d287c895573f7108da1b3","version":"v9"},{"repo":"actions/upload-artifact","sha":"043fb46d1a93c77aae656e7c1c64a875d1fc6a0a","version":"v7.0.1"},{"repo":"github/gh-aw-actions/setup","sha":"bc56a0cad2f450c562810785ef38649c04db812a","version":"v0.72.1"}],"containers":[{"image":"ghcr.io/github/gh-aw-firewall/agent:0.25.41"},{"image":"ghcr.io/github/gh-aw-firewall/api-proxy:0.25.41"},{"image":"ghcr.io/github/gh-aw-firewall/squid:0.25.41"},{"image":"ghcr.io/github/gh-aw-mcpg:v0.3.6","digest":"sha256:2bb8eef86006a4c5963c55616a9c51c32f27bfdecb023b8aa6f91f6718d9171c","pinned_image":"ghcr.io/github/gh-aw-mcpg:v0.3.6@sha256:2bb8eef86006a4c5963c55616a9c51c32f27bfdecb023b8aa6f91f6718d9171c"},{"image":"ghcr.io/github/github-mcp-server:v1.0.3","digest":"sha256:2ac27ef03461ef2b877031b838a7d1fd7f12b12d4ace7796d8cad91446d55959","pinned_image":"ghcr.io/github/github-mcp-server:v1.0.3@sha256:2ac27ef03461ef2b877031b838a7d1fd7f12b12d4ace7796d8cad91446d55959"},{"image":"node:lts-alpine","digest":"sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f","pinned_image":"node:lts-alpine@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f"}]}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"1a7cf9db98a6cea5bafae7909871b7f75b8d606e407fa90d61dd24734c19a438","compiler_version":"v0.72.1","agent_id":"copilot"}
+# gh-aw-manifest: {"version":1,"secrets":["GH_AW_GITHUB_MCP_SERVER_TOKEN","GH_AW_GITHUB_TOKEN","GITHUB_TOKEN"],"actions":[{"repo":"actions/checkout","sha":"de0fac2e4500dabe0009e67214ff5f5447ce83dd","version":"v6.0.2"},{"repo":"actions/download-artifact","sha":"3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c","version":"v8.0.1"},{"repo":"actions/github-script","sha":"3a2844b7e9c422d3c10d287c895573f7108da1b3","version":"v9"},{"repo":"actions/upload-artifact","sha":"043fb46d1a93c77aae656e7c1c64a875d1fc6a0a","version":"v7.0.1"},{"repo":"github/gh-aw-actions/setup","sha":"bc56a0cad2f450c562810785ef38649c04db812a","version":"v0.72.1"}],"containers":[{"image":"ghcr.io/github/gh-aw-firewall/agent:0.25.41"},{"image":"ghcr.io/github/gh-aw-firewall/api-proxy:0.25.41"},{"image":"ghcr.io/github/gh-aw-firewall/squid:0.25.41"},{"image":"ghcr.io/github/gh-aw-mcpg:v0.3.6","digest":"sha256:2bb8eef86006a4c5963c55616a9c51c32f27bfdecb023b8aa6f91f6718d9171c","pinned_image":"ghcr.io/github/gh-aw-mcpg:v0.3.6@sha256:2bb8eef86006a4c5963c55616a9c51c32f27bfdecb023b8aa6f91f6718d9171c"},{"image":"ghcr.io/github/github-mcp-server:v1.0.3","digest":"sha256:2ac27ef03461ef2b877031b838a7d1fd7f12b12d4ace7796d8cad91446d55959","pinned_image":"ghcr.io/github/github-mcp-server:v1.0.3@sha256:2ac27ef03461ef2b877031b838a7d1fd7f12b12d4ace7796d8cad91446d55959"},{"image":"node:lts-alpine","digest":"sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f","pinned_image":"node:lts-alpine@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f"}]}
 #    ___                   _   _      
 #   / _ \                 | | (_)     
 #  | |_| | __ _  ___ _ __ | |_ _  ___ 
@@ -22,10 +22,9 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# Generates an ACE editor session link when invoked with /ace command on pull request comments
+# Generates an ACE editor session link when invoked with /ace command on pull request or issue comments
 #
 # Secrets used:
-#   - COPILOT_GITHUB_TOKEN
 #   - GH_AW_GITHUB_MCP_SERVER_TOKEN
 #   - GH_AW_GITHUB_TOKEN
 #   - GITHUB_TOKEN
@@ -63,7 +62,7 @@ run-name: "ACE Editor Session"
 jobs:
   activation:
     needs: pre_activation
-    if: "needs.pre_activation.outputs.activated == 'true' && (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request != null)"
+    if: "needs.pre_activation.outputs.activated == 'true' && (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request == null || github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request != null)"
     runs-on: ubuntu-slim
     permissions:
       actions: read
@@ -78,7 +77,6 @@ jobs:
       engine_id: ${{ steps.generate_aw_info.outputs.engine_id }}
       lockdown_check_failed: ${{ steps.generate_aw_info.outputs.lockdown_check_failed == 'true' }}
       model: ${{ steps.generate_aw_info.outputs.model }}
-      secret_verification_result: ${{ steps.validate-secret.outputs.verification_result }}
       setup-trace-id: ${{ steps.setup.outputs.trace-id }}
       slash_command: ${{ needs.pre_activation.outputs.matched_command }}
       stale_lock_file_failed: ${{ steps.check-lock-file.outputs.stale_lock_file_failed == 'true' }}
@@ -135,11 +133,6 @@ jobs:
             setupGlobals(core, github, context, exec, io, getOctokit);
             const { main } = require('${{ runner.temp }}/gh-aw/actions/add_reaction.cjs');
             await main();
-      - name: Validate COPILOT_GITHUB_TOKEN secret
-        id: validate-secret
-        run: bash "${RUNNER_TEMP}/gh-aw/actions/validate_multi_secret.sh" COPILOT_GITHUB_TOKEN 'GitHub Copilot CLI' https://github.github.com/gh-aw/reference/engines/#github-copilot-default
-        env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
       - name: Checkout .github and .agents folders
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -222,23 +215,23 @@ jobs:
         run: |
           bash "${RUNNER_TEMP}/gh-aw/actions/create_prompt_first.sh"
           {
-          cat << 'GH_AW_PROMPT_0571c40b9b9857c4_EOF'
+          cat << 'GH_AW_PROMPT_ea1072c5f1b7e701_EOF'
           <system>
-          GH_AW_PROMPT_0571c40b9b9857c4_EOF
+          GH_AW_PROMPT_ea1072c5f1b7e701_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/xpia.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/temp_folder_prompt.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/markdown.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/safe_outputs_prompt.md"
-          cat << 'GH_AW_PROMPT_0571c40b9b9857c4_EOF'
+          cat << 'GH_AW_PROMPT_ea1072c5f1b7e701_EOF'
           <safe-output-tools>
           Tools: create_issue
-          GH_AW_PROMPT_0571c40b9b9857c4_EOF
+          GH_AW_PROMPT_ea1072c5f1b7e701_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/safe_outputs_auto_create_issue.md"
-          cat << 'GH_AW_PROMPT_0571c40b9b9857c4_EOF'
+          cat << 'GH_AW_PROMPT_ea1072c5f1b7e701_EOF'
           </safe-output-tools>
-          GH_AW_PROMPT_0571c40b9b9857c4_EOF
+          GH_AW_PROMPT_ea1072c5f1b7e701_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/mcp_cli_tools_prompt.md"
-          cat << 'GH_AW_PROMPT_0571c40b9b9857c4_EOF'
+          cat << 'GH_AW_PROMPT_ea1072c5f1b7e701_EOF'
           <github-context>
           The following GitHub context information is available for this workflow:
           {{#if __GH_AW_GITHUB_ACTOR__ }}
@@ -267,12 +260,12 @@ jobs:
           {{/if}}
           </github-context>
           
-          GH_AW_PROMPT_0571c40b9b9857c4_EOF
+          GH_AW_PROMPT_ea1072c5f1b7e701_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/github_mcp_tools_with_safeoutputs_prompt.md"
-          cat << 'GH_AW_PROMPT_0571c40b9b9857c4_EOF'
+          cat << 'GH_AW_PROMPT_ea1072c5f1b7e701_EOF'
           </system>
           {{#runtime-import .github/workflows/ace-editor.md}}
-          GH_AW_PROMPT_0571c40b9b9857c4_EOF
+          GH_AW_PROMPT_ea1072c5f1b7e701_EOF
           } > "$GH_AW_PROMPT"
       - name: Interpolate variables and render templates
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -357,6 +350,7 @@ jobs:
       - post_ace_link
     runs-on: ubuntu-latest
     permissions:
+      copilot-requests: write
       issues: read
       pull-requests: read
     env:
@@ -453,9 +447,9 @@ jobs:
           mkdir -p "${RUNNER_TEMP}/gh-aw/safeoutputs"
           mkdir -p /tmp/gh-aw/safeoutputs
           mkdir -p /tmp/gh-aw/mcp-logs/safeoutputs
-          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_ec7fd3c6c8a3ce92_EOF'
+          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_3eddb8c98cd20083_EOF'
           {"create_issue":{"labels":["ace-editor"],"max":1,"title_prefix":"[ace-editor]"}}
-          GH_AW_SAFE_OUTPUTS_CONFIG_ec7fd3c6c8a3ce92_EOF
+          GH_AW_SAFE_OUTPUTS_CONFIG_3eddb8c98cd20083_EOF
       - name: Generate Safe Outputs Tools
         env:
           GH_AW_TOOLS_META_JSON: |
@@ -584,7 +578,7 @@ jobs:
           
           mkdir -p /home/runner/.copilot
           GH_AW_NODE=$(which node 2>/dev/null || command -v node 2>/dev/null || echo node)
-          cat << GH_AW_MCP_CONFIG_d61e5450e9a741b8_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
+          cat << GH_AW_MCP_CONFIG_e720eeaaea19e1ce_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
           {
             "mcpServers": {
               "github": {
@@ -625,7 +619,7 @@ jobs:
               "payloadDir": "${MCP_GATEWAY_PAYLOAD_DIR}"
             }
           }
-          GH_AW_MCP_CONFIG_d61e5450e9a741b8_EOF
+          GH_AW_MCP_CONFIG_e720eeaaea19e1ce_EOF
       - name: Mount MCP servers as CLIs
         id: mount-mcp-clis
         continue-on-error: true
@@ -665,7 +659,7 @@ jobs:
           AWF_REFLECT_ENABLED: 1
           COPILOT_AGENT_RUNNER_TYPE: STANDALONE
           COPILOT_API_KEY: dummy-byok-key-for-offline-mode
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ github.token }}
           COPILOT_MODEL: ${{ vars.GH_AW_MODEL_AGENT_COPILOT || 'claude-sonnet-4.6' }}
           GH_AW_MCP_CONFIG: /home/runner/.copilot/mcp-config.json
           GH_AW_PHASE: agent
@@ -685,6 +679,7 @@ jobs:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]
+          S2STOKENS: true
           XDG_CONFIG_HOME: /home/runner
       - name: Detect Copilot errors
         id: detect-copilot-errors
@@ -727,8 +722,7 @@ jobs:
             const { main } = require('${{ runner.temp }}/gh-aw/actions/redact_secrets.cjs');
             await main();
         env:
-          GH_AW_SECRET_NAMES: 'COPILOT_GITHUB_TOKEN,GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN'
-          SECRET_COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          GH_AW_SECRET_NAMES: 'GH_AW_GITHUB_MCP_SERVER_TOKEN,GH_AW_GITHUB_TOKEN,GITHUB_TOKEN'
           SECRET_GH_AW_GITHUB_MCP_SERVER_TOKEN: ${{ secrets.GH_AW_GITHUB_MCP_SERVER_TOKEN }}
           SECRET_GH_AW_GITHUB_TOKEN: ${{ secrets.GH_AW_GITHUB_TOKEN }}
           SECRET_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -898,7 +892,6 @@ jobs:
           GH_AW_WORKFLOW_ID: "ace-editor"
           GH_AW_ACTION_FAILURE_ISSUE_EXPIRES_HOURS: "168"
           GH_AW_ENGINE_ID: "copilot"
-          GH_AW_SECRET_VERIFICATION_RESULT: ${{ needs.activation.outputs.secret_verification_result }}
           GH_AW_INFERENCE_ACCESS_ERROR: ${{ needs.agent.outputs.inference_access_error }}
           GH_AW_MCP_POLICY_ERROR: ${{ needs.agent.outputs.mcp_policy_error }}
           GH_AW_AGENTIC_ENGINE_TIMEOUT: ${{ needs.agent.outputs.agentic_engine_timeout }}
@@ -939,7 +932,6 @@ jobs:
 
   post_ace_link:
     needs: activation
-    if: needs.activation.outputs.activated == 'true'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -959,22 +951,24 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
-            const prNumber = context.payload.issue.number;
+            const issueNumber = context.payload.issue.number;
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const actor = context.actor;
-            const sessionId = `${owner}-${repo}-pr${prNumber}`;
+            const isPR = !!context.payload.issue.pull_request;
+            const contextType = isPR ? 'pull request' : 'issue';
+            const sessionId = `${owner}-${repo}-${isPR ? 'pr' : 'issue'}${issueNumber}`;
             const aceUrl = `https://ace.com/session/${sessionId}`;
 
             await github.rest.issues.createComment({
               owner,
               repo,
-              issue_number: prNumber,
-              body: `👋 Hey @${actor}! Here's your ACE editor session link for this pull request:\n\n🔗 **${aceUrl}**\n\nCopy and paste this link into Slack to invite your teammates into the session! 🚀`,
+              issue_number: issueNumber,
+              body: `👋 Hey @${actor}! Here's your ACE editor session link for this ${contextType}:\n\n🔗 **${aceUrl}**\n\nCopy and paste this link into Slack to invite your teammates into the session! 🚀`,
             });
 
   pre_activation:
-    if: "(github.event_name != 'issue_comment' && github.event_name != 'pull_request_review_comment' || contains(fromJSON('[\"OWNER\",\"MEMBER\",\"COLLABORATOR\"]'), github.event.comment.author_association)) && (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request != null)"
+    if: "(github.event_name != 'issue_comment' && github.event_name != 'pull_request_review_comment' || contains(fromJSON('[\"OWNER\",\"MEMBER\",\"COLLABORATOR\"]'), github.event.comment.author_association)) && (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request == null || github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ace ') || startsWith(github.event.comment.body, '/ace\n') || github.event.comment.body == '/ace') && github.event.issue.pull_request != null)"
     runs-on: ubuntu-slim
     outputs:
       activated: ${{ steps.check_membership.outputs.is_team_member == 'true' && steps.check_command_position.outputs.command_position_ok == 'true' }}

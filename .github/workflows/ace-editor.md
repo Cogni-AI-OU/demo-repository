@@ -1,11 +1,16 @@
 ---
-emoji: "✏️"
+# Recompiled to ensure synchronization
 name: ACE Editor Session
-description: Generates an ACE editor session link when invoked with /ace command on pull request comments
+description: Generates an ACE editor session link when invoked with /ace command on pull request or issue comments
+engine:
+  id: copilot
+features:
+  copilot-requests: true
+
 on:
   slash_command:
     name: ace
-    events: [pull_request_comment]
+    events: [pull_request_comment, issue_comment]
 strict: false
 permissions:
   pull-requests: read
@@ -14,7 +19,6 @@ jobs:
   post_ace_link:
     runs-on: ubuntu-latest
     needs: [activation]
-    if: needs.activation.outputs.activated == 'true'
     permissions:
       pull-requests: write
       issues: write
@@ -23,22 +27,24 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const prNumber = context.payload.issue.number;
+            const issueNumber = context.payload.issue.number;
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const actor = context.actor;
-            const sessionId = `${owner}-${repo}-pr${prNumber}`;
+            const isPR = !!context.payload.issue.pull_request;
+            const contextType = isPR ? 'pull request' : 'issue';
+            const sessionId = `${owner}-${repo}-${isPR ? 'pr' : 'issue'}${issueNumber}`;
             const aceUrl = `https://ace.com/session/${sessionId}`;
 
             await github.rest.issues.createComment({
               owner,
               repo,
-              issue_number: prNumber,
-              body: `👋 Hey @${actor}! Here's your ACE editor session link for this pull request:\n\n🔗 **${aceUrl}**\n\nCopy and paste this link into Slack to invite your teammates into the session! 🚀`,
+              issue_number: issueNumber,
+              body: `👋 Hey @${actor}! Here's your ACE editor session link for this ${contextType}:\n\n🔗 **${aceUrl}**\n\nCopy and paste this link into Slack to invite your teammates into the session! 🚀`,
             });
 tools:
   cli-proxy: true
 
 ---
 
-Classic action that generates an ACE editor session link on pull request comment slash command.
+Classic action that generates an ACE editor session link on pull request or issue comment slash command.
