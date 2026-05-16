@@ -12,11 +12,13 @@ on:
     name: co
     events: [issue_comment, pull_request_comment]
   workflow_dispatch:
-    prompt:
-      description: User prompt
-      required: false
-      default: ''
+    inputs:
+      prompt:
+        description: User prompt
+        required: false
+        default: ''
 permissions:
+  contents: read
   actions: read
   discussions: read
   issues: read
