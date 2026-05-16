@@ -5,6 +5,8 @@ name: Cogni AI Agent
 description: Runs Cogni AI Architect, an elite autonomous engineering kernel and systems architect.
 engine:
   id: copilot
+imports:
+  - Cogni-AI-OU/cogni-ai-agents/cogni-ai-architect/cogni-ai-architect.agent.md@main
 on:
   slash_command:
     name: co
@@ -19,6 +21,9 @@ permissions:
   discussions: read
   issues: read
   pull-requests: read
+safe-outputs:
+  create-pull-request-review-comment:
+    max: 20
 strict: false
 jobs:
   init:
