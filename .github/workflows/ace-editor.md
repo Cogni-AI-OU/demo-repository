@@ -2,9 +2,9 @@
 name: ACE Editor Session
 description: Generates an ACE editor session link when invoked with /ace command on pull request or issue comments
 engine:
-  env:
-    COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   id: copilot
+features:
+  copilot-requests: true
 
 on:
   slash_command:
