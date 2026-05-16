@@ -75,6 +75,7 @@ tools:
   github:
     mode: gh-proxy
     toolsets: [default, pull_requests, issues]
+timeout-minutes: 60
 
 ---
 
