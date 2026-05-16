@@ -54,9 +54,21 @@ jobs:
       - name: Checkout cogni-ai-agent-skills
         shell: bash
         run: |
+          # Clone to home-scoped directory
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
-            ${{ runner.temp }}/.skills
+            ~/.agents/skills
+          
+          # Support different engines in home-scoped directories
+          mkdir -p ~/.copilot ~/.claude
+          ln -s ~/.agents/skills ~/.copilot/skills
+          ln -s ~/.agents/skills ~/.claude/skills
+          
+          # Workspace symlinks for sandboxed file tools
+          mkdir -p .agents .github .claude
+          ln -s ~/.agents/skills .agents/skills
+          ln -s ~/.agents/skills .github/skills
+          ln -s ~/.agents/skills .claude/skills
   script:
     runs-on: ubuntu-latest
     needs: [activation]
