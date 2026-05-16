@@ -33,21 +33,18 @@ jobs:
     needs: [activation]
     steps:
       - name: Checkout cogni-ai-agents
-        if: steps.check.outputs.run == 'true'
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agents.git \
             ${{ runner.temp }}/.agents
       - name: Checkout cogni-ai-agent-instructions
-        if: steps.check.outputs.run == 'true'
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-instructions.git \
             ${{ runner.temp }}/.instructions
       - name: Checkout cogni-ai-agent-skills
-        if: steps.check.outputs.run == 'true'
         shell: bash
         run: |
           git clone --depth 1 \
@@ -64,13 +61,13 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const issueNumber = context.payload.issue.number;
+            const issueNumber = context.payload.issue?.number || context.payload.pull_request?.number || context.runId;
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const actor = context.actor;
-            const isPR = !!context.payload.issue.pull_request;
-            const contextType = isPR ? 'pull request' : 'issue';
-            const sessionId = `${owner}-${repo}-${isPR ? 'pr' : 'issue'}${issueNumber}`;
+            const isPR = !!(context.payload.issue?.pull_request || context.payload.pull_request);
+            const contextType = isPR ? 'pull request' : (context.payload.issue ? 'issue' : 'workflow_dispatch');
+            const sessionId = `${owner}-${repo}-${isPR ? 'pr' : (context.payload.issue ? 'issue' : 'run')}${issueNumber}`;
 tools:
   bash:
     - "cat:*"
