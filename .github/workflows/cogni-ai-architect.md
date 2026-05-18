@@ -44,6 +44,8 @@ jobs:
         run: gh copilot -- plugin install devops-oncall@awesome-copilot
       - name: Install git-commit skill
         run: gh skill install github/awesome-copilot git-commit --scope user
+      - name: Install Cogni AI skills
+        run: gh skill install Cogni-AI-OU/cogni-ai-agent-skills --force --scope user
   init:
     runs-on: ubuntu-latest
     needs: [activation]
