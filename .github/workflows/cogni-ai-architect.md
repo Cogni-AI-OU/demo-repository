@@ -38,40 +38,35 @@ jobs:
   agent:
     # To run steps *before* the agent executes:
     pre-steps:
-      - name: Pre-Agent Setup
-        run: echo "Setting up prerequisites before the agent runs."
+      - name: Install Cogni AI agents
+        shell: bash
+        run: |
+          git clone --depth 1 \
+            https://github.com/Cogni-AI-OU/cogni-ai-agents.git \
+            ${{ env.HOME }}/.copilot/agents
+      - name: Install Cogni AI skills
+        shell: bash
+        run: |
+          git clone --depth 1 \
+            https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
+            ${{ env.HOME }}/.copilot/skills
       - name: Install awesome-copilot plugin
         run: gh copilot -- plugin install awesome-copilot@awesome-copilot
       - name: Install devops-oncall plugin
         run: gh copilot -- plugin install devops-oncall@awesome-copilot
       - name: Install git-commit skill
         run: gh skill install github/awesome-copilot git-commit --scope user
-      - name: Install Cogni AI skills
-        run: |
-          gh skill search --owner Cogni-AI-OU 'git' -L 100 --json skillName --jq '.[].skillName' \
-            | xargs -L1 gh skill install Cogni-AI-OU/cogni-ai-agent-skills --force --scope user
+
   init:
     runs-on: ubuntu-latest
     needs: [activation]
     steps:
-      - name: Checkout cogni-ai-agents
-        shell: bash
-        run: |
-          git clone --depth 1 \
-            https://github.com/Cogni-AI-OU/cogni-ai-agents.git \
-            ${{ runner.temp }}/.agents
       - name: Checkout cogni-ai-agent-instructions
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-instructions.git \
             ${{ runner.temp }}/.instructions
-      - name: Checkout cogni-ai-agent-skills
-        shell: bash
-        run: |
-          git clone --depth 1 \
-            https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
-            ${{ runner.temp }}/.skills
   script:
     runs-on: ubuntu-latest
     needs: [activation]
