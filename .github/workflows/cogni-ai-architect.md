@@ -47,7 +47,9 @@ jobs:
       - name: Install git-commit skill
         run: gh skill install github/awesome-copilot git-commit --scope user
       - name: Install Cogni AI skills
-        run: gh skill install Cogni-AI-OU/cogni-ai-agent-skills --force --scope user
+        run: |
+          gh skill search --owner Cogni-AI-OU 'git' -L 100 --json skillName --jq '.[].skillName' \
+            | xargs -L1 gh skill install Cogni-AI-OU/cogni-ai-agent-skills --force --scope user
   init:
     runs-on: ubuntu-latest
     needs: [activation]
