@@ -62,7 +62,7 @@ jobs:
     needs: [activation]
     steps:
       - name: Install devops-oncall plugin
-        run: gh copilot -- plugin install devops-oncall@awesome-copilot --scope user
+        run: gh copilot -- plugin install devops-oncall@awesome-copilot
   script:
     runs-on: ubuntu-latest
     needs: [activation]
