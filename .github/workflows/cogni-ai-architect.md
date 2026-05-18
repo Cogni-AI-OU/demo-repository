@@ -62,7 +62,7 @@ jobs:
     needs: [activation]
     steps:
       - name: Install devops-oncall plugin
-        run: gh copilot -- plugin install devops-oncall@awesome-copilot
+        run: gh copilot -- plugin install devops-oncall@awesome-copilot --scope user
   script:
     runs-on: ubuntu-latest
     needs: [activation]
@@ -86,7 +86,7 @@ jobs:
     needs: [activation]
     steps:
       - name: Install git-commit skill
-        run: gh skill install github/awesome-copilot git-commit
+        run: gh skill install github/awesome-copilot git-commit --scope user
 tools:
   bash:
     - "cat:*"
