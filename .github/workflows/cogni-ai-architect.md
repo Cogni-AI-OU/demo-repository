@@ -40,6 +40,8 @@ jobs:
     pre-steps:
       - name: Pre-Agent Setup
         run: echo "Setting up prerequisites before the agent runs."
+      - name: Install awesome-copilot plugin
+        run: gh copilot -- plugin install awesome-copilot@awesome-copilot
       - name: Install devops-oncall plugin
         run: gh copilot -- plugin install devops-oncall@awesome-copilot
       - name: Install git-commit skill
