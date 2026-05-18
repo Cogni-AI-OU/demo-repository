@@ -15,7 +15,7 @@ permissions:
   pull-requests: read
   issues: read
 tools:
-  bash:
+  bash: true
   cli-proxy: true
 
 ---
