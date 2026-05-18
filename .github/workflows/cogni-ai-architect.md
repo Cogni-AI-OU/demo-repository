@@ -35,6 +35,15 @@ safe-outputs:
     max: 20
 strict: false
 jobs:
+  agent:
+    # To run steps *before* the agent executes:
+    pre-steps:
+      - name: Pre-Agent Setup
+        run: echo "Setting up prerequisites before the agent runs."
+      - name: Install devops-oncall plugin
+        run: gh copilot -- plugin install devops-oncall@awesome-copilot
+      - name: Install git-commit skill
+        run: gh skill install github/awesome-copilot git-commit --scope user
   init:
     runs-on: ubuntu-latest
     needs: [activation]
@@ -57,12 +66,6 @@ jobs:
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
             ${{ runner.temp }}/.skills
-  plugins:
-    runs-on: ubuntu-latest
-    needs: [activation]
-    steps:
-      - name: Install devops-oncall plugin
-        run: gh copilot -- plugin install devops-oncall@awesome-copilot
   script:
     runs-on: ubuntu-latest
     needs: [activation]
@@ -81,12 +84,6 @@ jobs:
             const isPR = !!(context.payload.issue?.pull_request || context.payload.pull_request);
             const contextType = isPR ? 'pull request' : (context.payload.issue ? 'issue' : 'workflow_dispatch');
             const sessionId = `${owner}-${repo}-${isPR ? 'pr' : (context.payload.issue ? 'issue' : 'run')}${issueNumber}`;
-  skills:
-    runs-on: ubuntu-latest
-    needs: [activation]
-    steps:
-      - name: Install git-commit skill
-        run: gh skill install github/awesome-copilot git-commit --scope user
 tools:
   bash:
     - "cat:*"
