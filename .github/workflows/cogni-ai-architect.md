@@ -43,13 +43,13 @@ jobs:
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agents.git \
-            ${{ env.HOME }}/.copilot/agents
+            $HOME/.copilot/agents
       - name: Install Cogni AI skills
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
-            ${{ env.HOME }}/.copilot/skills
+            $HOME/.copilot/skills
       - name: Install awesome-copilot plugin
         run: gh copilot -- plugin install awesome-copilot@awesome-copilot
       - name: Install devops-oncall plugin
