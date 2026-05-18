@@ -35,28 +35,38 @@ safe-outputs:
     max: 20
 strict: false
 jobs:
-  init:
-    runs-on: ubuntu-latest
-    needs: [activation]
-    steps:
-      - name: Checkout cogni-ai-agents
+  agent:
+    # To run steps *before* the agent executes:
+    pre-steps:
+      - name: Install Cogni AI agents
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agents.git \
-            ${{ runner.temp }}/.agents
+            $HOME/.copilot/agents
+      - name: Install Cogni AI skills
+        shell: bash
+        run: |
+          git clone --depth 1 \
+            https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
+            $HOME/.copilot/skills
+      - name: Install awesome-copilot plugin
+        run: gh copilot -- plugin install awesome-copilot@awesome-copilot
+      - name: Install devops-oncall plugin
+        run: gh copilot -- plugin install devops-oncall@awesome-copilot
+      - name: Install git-commit skill
+        run: gh skill install github/awesome-copilot git-commit --scope user
+
+  init:
+    runs-on: ubuntu-latest
+    needs: [activation]
+    steps:
       - name: Checkout cogni-ai-agent-instructions
         shell: bash
         run: |
           git clone --depth 1 \
             https://github.com/Cogni-AI-OU/cogni-ai-agent-instructions.git \
             ${{ runner.temp }}/.instructions
-      - name: Checkout cogni-ai-agent-skills
-        shell: bash
-        run: |
-          git clone --depth 1 \
-            https://github.com/Cogni-AI-OU/cogni-ai-agent-skills.git \
-            ${{ runner.temp }}/.skills
   script:
     runs-on: ubuntu-latest
     needs: [activation]
