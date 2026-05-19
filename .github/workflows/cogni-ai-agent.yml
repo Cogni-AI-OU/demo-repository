@@ -46,7 +46,7 @@ on:
         required: false
         type: string
       prompt:
-        default: ''
+        default: ""
         description: Custom prompt to override the default prompt
         required: false
         type: string
@@ -126,17 +126,17 @@ on:
           - opencode/qwen3.6-plus
           - opencode/qwen3.5-plus
           # Grok models (xAI)
-          - xai/grok-4-1-fast-non-reasoning  # Fast responses, 2M context
-          - xai/grok-4-1-fast-reasoning  # Tool-calling + reasoning, 2M context
-          - xai/grok-4.20-0309-non-reasoning  # Flagship, 2M context
-          - xai/grok-4.20-0309-reasoning  # Flagship + reasoning, 2M context
-          - xai/grok-code-fast-1  # Agentic coding + reasoning, 256K context
+          - xai/grok-4-1-fast-non-reasoning # Fast responses, 2M context
+          - xai/grok-4-1-fast-reasoning # Tool-calling + reasoning, 2M context
+          - xai/grok-4.20-0309-non-reasoning # Flagship, 2M context
+          - xai/grok-4.20-0309-reasoning # Flagship + reasoning, 2M context
+          - xai/grok-code-fast-1 # Agentic coding + reasoning, 256K context
         required: false
         type: choice
       prompt:
         description: Custom prompt to override the default prompt
         required: false
-        default: ''
+        default: ""
 env:
   GITHUB_REF_RESOLVED: >-
     ${{
@@ -190,7 +190,7 @@ jobs:
       actions: read
       contents: write
       discussions: read
-      id-token: write  # Needed so opencode can request an OIDC token for GitHub API calls
+      id-token: write # Needed so opencode can request an OIDC token for GitHub API calls
       issues: write
       models: read
       packages: read
@@ -199,7 +199,7 @@ jobs:
       # See: <https://github.com/actions/checkout>
       - uses: actions/checkout@v6
         with:
-          persist-credentials: false  # Prevents duplicate Authorization header
+          persist-credentials: false # Prevents duplicate Authorization header
           ref: ${{ env.GITHUB_REF_RESOLVED }}
       - uses: actions/cache@v5.0.1
         with:
@@ -216,7 +216,7 @@ jobs:
             .devcontainer/requirements.txt
             requirements.txt
             **/pyproject.toml
-          python-version: '3.12'
+          python-version: "3.12"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Install dependencies

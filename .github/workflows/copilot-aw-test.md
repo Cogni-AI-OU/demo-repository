@@ -17,7 +17,6 @@ permissions:
 tools:
   bash: true
   cli-proxy: true
-
 ---
 
 This is the test run.
