@@ -1,16 +1,16 @@
 ---
-# Cogni AI Architect
-# Triggered by /co, /cogni
 name: Cogni AI Architect
 description: Runs Cogni AI Architect, an elite autonomous engineering kernel and systems architect.
 engine:
   id: copilot
 imports:
   - Cogni-AI-OU/cogni-ai-agents/cogni-ai-architect/cogni-ai-architect.agent.md@main
+network: defaults
 on:
   slash_command:
-    name: co
-    events: [issue_comment, pull_request_comment]
+    name: archi
+  label_command:
+    name: cogni-ai-architect
   workflow_dispatch:
     inputs:
       prompt:
@@ -33,7 +33,8 @@ permissions:
 safe-outputs:
   create-pull-request-review-comment:
     max: 20
-strict: false
+  update-issue:
+strict: true
 jobs:
   agent:
     # To run steps *before* the agent executes:
@@ -93,6 +94,7 @@ tools:
     - "tee:*"
     - "date:*"
     - "ls:*"
+    - "gh:*"
     - "grep:*"
     - "git:*"
     - "pwd:*"
@@ -104,10 +106,12 @@ tools:
     - "sed:*"
     - "awk:*"
     - "find:*"
+  cache-memory: true
   cli-proxy: true
   github:
     mode: gh-proxy
-    toolsets: [default, pull_requests, issues]
+    toolsets: [default, actions, issues, pull_requests]  # default: context, repos, issues, pull_requests; actions: workflow logs and artifacts
+  web-fetch:
 timeout-minutes: 60
 
 ---
@@ -116,15 +120,32 @@ You are Cogni AI Architect, an elite autonomous engineering kernel and systems a
 
 ## Current Context
 
-- **Repository**: ${{ github.repository }}
-- **Triggering Content**: "${{ inputs.prompt || github.event.inputs.prompt || steps.sanitized.outputs.text }}"
+- **Base SHA**: `${{ github.event.pull_request.base.sha }}`
+- **Head SHA**: `${{ github.event.pull_request.head.sha }}`
+
+{{#if github.event.pull_request.number}}
 - **Issue/PR Number**: ${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+{{/if}}
+
+{{#if github.event.issue.number}}
+- **Issue Number**: ${{ github.event.issue.number }}
+{{/if}}
+
+- **Issue/PR Title**: ${{ steps.sanitized.outputs.title }}
+- **Repository**: ${{ github.repository }}
 - **Triggered by**: @${{ github.actor }}
+- **Triggering Content**: "${{ inputs.prompt || github.event.inputs.prompt || steps.sanitized.outputs.text }}"
+
+{{#if github.event.workflow_run.id}}
+- **Conclusion**: ${{ github.event.workflow_run.conclusion }}
+- **Head SHA**: ${{ github.event.workflow_run.head_sha }}
+- **Workflow Run**: [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})
+- **Workflow Trigger**: ${{ github.event.workflow_run.event }}
+{{/if}}
 
 ## Important Instructions
 
 - **Git Configuration**: The environment is pre-configured with the necessary Git identity. **NEVER** attempt to run `git config --global` as it will be blocked by security policy.
 - **Committing and Pushing**: Do **NOT** attempt to manually commit or push changes using `git commit` or `git push`. The opencode infrastructure automatically handles committing and pushing your changes to the appropriate branch after you complete your task.
 - **Tools**: Use the provided tools (ls, grep, cat, etc.) to explore the codebase and perform your task.
-
-{{#runtime-import shared/noop-reminder.md}}
+- Assign sub-issues to Copilot with `assignees: copilot` for parallel execution.
