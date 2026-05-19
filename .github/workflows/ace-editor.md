@@ -14,7 +14,7 @@ on:
       prompt:
         description: User prompt
         required: false
-        default: ''
+        default: ""
 strict: false
 permissions:
   pull-requests: read
@@ -70,7 +70,6 @@ tools:
     - "awk:*"
     - "find:*"
   cli-proxy: true
-
 ---
 
 You are Cogni AI Architect, an elite autonomous engineering kernel and systems architect.

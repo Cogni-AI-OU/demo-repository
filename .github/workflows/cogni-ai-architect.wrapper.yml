@@ -5,7 +5,7 @@ on:
       prompt:
         description: User prompt
         required: false
-        default: 'Hello from wrapper'
+        default: "Hello from wrapper"
 
 jobs:
   call-architect:
